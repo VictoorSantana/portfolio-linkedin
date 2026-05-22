@@ -12,10 +12,61 @@ class World {
 
 
     addCube(x, y, z) {
-        this.cubes.push({
+        const cube = {
             position: { x, y, z },
+            leftFace: true,
+            rightFace: true,
+            frontFace: true,
+            backFace: true,
+            topFace: true,
+            bottomFace: true,
             id: Date.now() + Math.random()
-        });
+        };
+
+        for (const other of this.cubes) {
+            
+            const ox = other.position.x;
+            const oy = other.position.y;
+            const oz = other.position.z;
+
+            // direita
+            if (ox === x + 1 && oy === y && oz === z) {
+                cube.rightFace = false;
+                other.leftFace = false;
+            }
+
+            // esquerda
+            if (ox === x - 1 && oy === y && oz === z) {
+                cube.leftFace = false;
+                other.rightFace = false;
+            }
+
+            // cima
+            if (ox === x && oy === y + 1 && oz === z) {
+                cube.topFace = false;
+                other.bottomFace = false;
+            }
+
+            // baixo
+            if (ox === x && oy === y - 1 && oz === z) {
+                cube.bottomFace = false;
+                other.topFace = false;
+            }
+
+            // frente
+            if (ox === x && oy === y && oz === z + 1) {
+                cube.frontFace = false;
+                other.backFace = false;
+            }
+
+            // trás
+            if (ox === x && oy === y && oz === z - 1) {
+                cube.backFace = false;
+                other.frontFace = false;
+            }
+        }
+
+        this.cubes.push(cube);
     }
 
     // Função para remover um cubo específico

@@ -47,13 +47,13 @@ function compileShader(source, type) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    
+
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         console.error('Erro ao compilar shader:', gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
     }
-    
+
     return shader;
 }
 
@@ -76,52 +76,52 @@ gl.useProgram(program);
 // Cada vértice: posição (x, y, z) e cor (r, g, b)
 const vertices = [
     // Face frontal (z = 0.5)
-    -0.5, -0.5,  0.5,  1.0, 0.0, 0.0,  // vermelho
-     0.5, -0.5,  0.5,  1.0, 0.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0, 0.0,
-    -0.5, -0.5,  0.5,  1.0, 0.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0, 0.0,
-    -0.5,  0.5,  0.5,  1.0, 0.0, 0.0,
-    
+    -0.5, -0.5, 0.5, 1.0, 0.0, 0.0,  // vermelho
+    0.5, -0.5, 0.5, 1.0, 0.0, 0.0,
+    0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
+    -0.5, -0.5, 0.5, 1.0, 0.0, 0.0,
+    0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
+    -0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
+
     // Face traseira (z = -0.5)
-    -0.5, -0.5, -0.5,  0.0, 1.0, 0.0,  // verde
-    -0.5,  0.5, -0.5,  0.0, 1.0, 0.0,
-     0.5,  0.5, -0.5,  0.0, 1.0, 0.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0, 0.0,
-     0.5,  0.5, -0.5,  0.0, 1.0, 0.0,
-     0.5, -0.5, -0.5,  0.0, 1.0, 0.0,
-    
+    -0.5, -0.5, -0.5, 0.0, 1.0, 0.0,  // verde
+    -0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
+    0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
+    -0.5, -0.5, -0.5, 0.0, 1.0, 0.0,
+    0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
+    0.5, -0.5, -0.5, 0.0, 1.0, 0.0,
+
     // Face superior (y = 0.5)
-    -0.5,  0.5, -0.5,  0.0, 0.0, 1.0,  // azul
-    -0.5,  0.5,  0.5,  0.0, 0.0, 1.0,
-     0.5,  0.5,  0.5,  0.0, 0.0, 1.0,
-    -0.5,  0.5, -0.5,  0.0, 0.0, 1.0,
-     0.5,  0.5,  0.5,  0.0, 0.0, 1.0,
-     0.5,  0.5, -0.5,  0.0, 0.0, 1.0,
-    
+    -0.5, 0.5, -0.5, 0.0, 0.0, 1.0,  // azul
+    -0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
+    0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
+    -0.5, 0.5, -0.5, 0.0, 0.0, 1.0,
+    0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
+    0.5, 0.5, -0.5, 0.0, 0.0, 1.0,
+
     // Face inferior (y = -0.5)
-    -0.5, -0.5, -0.5,  1.0, 1.0, 0.0,  // amarelo
-     0.5, -0.5, -0.5,  1.0, 1.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 1.0, 0.0,
-    -0.5, -0.5, -0.5,  1.0, 1.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 1.0, 0.0,
-    -0.5, -0.5,  0.5,  1.0, 1.0, 0.0,
-    
+    -0.5, -0.5, -0.5, 1.0, 1.0, 0.0,  // amarelo
+    0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
+    0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
+    -0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
+    0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
+    -0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
+
     // Face direita (x = 0.5)
-     0.5, -0.5, -0.5,  1.0, 0.0, 1.0,  // magenta
-     0.5,  0.5, -0.5,  1.0, 0.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 0.0, 1.0,
-     0.5, -0.5, -0.5,  1.0, 0.0, 1.0,
-     0.5,  0.5,  0.5,  1.0, 0.0, 1.0,
-     0.5, -0.5,  0.5,  1.0, 0.0, 1.0,
-    
+    0.5, -0.5, -0.5, 1.0, 0.0, 1.0,  // magenta
+    0.5, 0.5, -0.5, 1.0, 0.0, 1.0,
+    0.5, 0.5, 0.5, 1.0, 0.0, 1.0,
+    0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
+    0.5, 0.5, 0.5, 1.0, 0.0, 1.0,
+    0.5, -0.5, 0.5, 1.0, 0.0, 1.0,
+
     // Face esquerda (x = -0.5)
-    -0.5, -0.5, -0.5,  0.0, 1.0, 1.0,  // ciano
-    -0.5, -0.5,  0.5,  0.0, 1.0, 1.0,
-    -0.5,  0.5,  0.5,  0.0, 1.0, 1.0,
-    -0.5, -0.5, -0.5,  0.0, 1.0, 1.0,
-    -0.5,  0.5,  0.5,  0.0, 1.0, 1.0,
-    -0.5,  0.5, -0.5,  0.0, 1.0, 1.0
+    -0.5, -0.5, -0.5, 0.0, 1.0, 1.0,  // ciano
+    -0.5, -0.5, 0.5, 0.0, 1.0, 1.0,
+    -0.5, 0.5, 0.5, 0.0, 1.0, 1.0,
+    -0.5, -0.5, -0.5, 0.0, 1.0, 1.0,
+    -0.5, 0.5, 0.5, 0.0, 1.0, 1.0,
+    -0.5, 0.5, -0.5, 0.0, 1.0, 1.0
 ];
 
 // Criar buffer de vértices
@@ -147,7 +147,7 @@ const projectionMatrixUniform = gl.getUniformLocation(program, 'uProjectionMatri
 function createPerspectiveMatrix(fov, aspect, near, far) {
     const f = 1.0 / Math.tan(fov * Math.PI / 360);
     const range = near - far;
-    
+
     return new Float32Array([
         f / aspect, 0, 0, 0,
         0, f, 0, 0,
@@ -161,7 +161,7 @@ function createModelViewMatrix(rotationX, rotationY, translationZ) {
     const sinX = Math.sin(rotationX);
     const cosY = Math.cos(rotationY);
     const sinY = Math.sin(rotationY);
-    
+
     // Matriz de rotação combinada (Y então X)
     return new Float32Array([
         cosY, sinX * sinY, -cosX * sinY, 0,
@@ -186,7 +186,7 @@ function multiplyMatrices(a, b) {
     const result = new Float32Array(16);
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
-            result[i * 4 + j] = 
+            result[i * 4 + j] =
                 a[i * 4 + 0] * b[0 * 4 + j] +
                 a[i * 4 + 1] * b[1 * 4 + j] +
                 a[i * 4 + 2] * b[2 * 4 + j] +
@@ -202,11 +202,11 @@ function createViewMatrix(camera) {
     const sinPitch = Math.sin(camera.pitch);
     const cosYaw = Math.cos(camera.yaw);
     const sinYaw = Math.sin(camera.yaw);
-    
+
     const xaxis = [cosYaw, 0, -sinYaw];
     const yaxis = [sinYaw * sinPitch, cosPitch, cosYaw * sinPitch];
     const zaxis = [sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw];
-    
+
     return new Float32Array([
         xaxis[0], yaxis[0], zaxis[0], 0,
         xaxis[1], yaxis[1], zaxis[1], 0,
@@ -221,13 +221,19 @@ function dot(v1, v2) {
 
 // Configurar renderização
 gl.enable(gl.DEPTH_TEST);
+
+gl.enable(gl.CULL_FACE);
+gl.cullFace(gl.BACK);
+
 gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
 // Variáveis de câmera FPS
 let camera = new Camera();
 let world = new World();
 
-world.addCube(0, 0, 0); 
+world.addCube(0, 0, 0);
+world.addCube(1, 0, 0);
+world.addCube(0, 1, 0);
 
 let keys = {
     w: false,
@@ -270,7 +276,7 @@ document.addEventListener('mousemove', (e) => {
 
 // Atualizar posição da câmera
 function updateCamera(deltaTime) {
-    
+
     // Movimento para frente/trás (W/S)
     if (keys.w) {
         camera.moveForward(deltaTime);
@@ -278,7 +284,7 @@ function updateCamera(deltaTime) {
     if (keys.s) {
         camera.moveBackward(deltaTime);
     }
-    
+
     // Movimento lateral (A/D)
     if (keys.a) {
         camera.moveLeft(deltaTime);
@@ -292,11 +298,11 @@ function updateCamera(deltaTime) {
 function animate(currentTime) {
     const deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
-    
+
     if (isPointerLocked) {
         updateCamera(deltaTime);
     }
-    
+
     render();
 
     requestAnimationFrame(animate);
@@ -306,33 +312,69 @@ function animate(currentTime) {
 function render() {
     // Limpar buffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
+
     // Calcular aspect ratio
     const aspect = canvas.width / canvas.height;
-    
+
     // Matriz de projeção perspectiva
     const projectionMatrix = createPerspectiveMatrix(45, aspect, 0.1, 100.0);
-    
+
     // Matriz de visualização da câmera FPS
     const viewMatrix = createViewMatrix(camera);
-    
+
     // Enviar matriz de projeção para o shader
     gl.uniformMatrix4fv(projectionMatrixUniform, false, projectionMatrix);
-    
+
     // Desenhar
 
     world.cubes.forEach((cube) => {
         // Criar matriz de translação para a posição do cubo
         const translationMatrix = createTranslationMatrix(cube.position.x, cube.position.y, cube.position.z);
-        
+
         // Multiplicar translação pela matriz de visualização (ordem correta: Model * View)
         const modelViewMatrix = multiplyMatrices(translationMatrix, viewMatrix);
-        
+
         // Enviar matriz combinada para o shader
         gl.uniformMatrix4fv(modelViewMatrixUniform, false, modelViewMatrix);
-        
-        // Desenhar o cubo
-        gl.drawArrays(gl.TRIANGLES, 0, 36);
+
+        // Desenhar apenas as faces ativas (cada face tem 6 vértices)
+        const faceVertexCount = 6;
+        let offset = 0;
+
+        // Face frontal (z = 0.5) - offset 0
+        if (cube.frontFace) {
+            gl.drawArrays(gl.TRIANGLES, offset, faceVertexCount);
+        }
+        offset += faceVertexCount;
+
+        // Face traseira (z = -0.5) - offset 6
+        if (cube.backFace) {
+            gl.drawArrays(gl.TRIANGLES, offset, faceVertexCount);
+        }
+        offset += faceVertexCount;
+
+        // Face superior (y = 0.5) - offset 12
+        if (cube.topFace) {
+            gl.drawArrays(gl.TRIANGLES, offset, faceVertexCount);
+        }
+        offset += faceVertexCount;
+
+        // Face inferior (y = -0.5) - offset 18
+        if (cube.bottomFace) {
+            gl.drawArrays(gl.TRIANGLES, offset, faceVertexCount);
+        }
+        offset += faceVertexCount;
+
+        // Face direita (x = 0.5) - offset 24
+        if (cube.rightFace) {
+            gl.drawArrays(gl.TRIANGLES, offset, faceVertexCount);
+        }
+        offset += faceVertexCount;
+
+        // Face esquerda (x = -0.5) - offset 30
+        if (cube.leftFace) {
+            gl.drawArrays(gl.TRIANGLES, offset, faceVertexCount);
+        }
     })
 }
 
