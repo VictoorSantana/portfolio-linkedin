@@ -171,6 +171,31 @@ function createModelViewMatrix(rotationX, rotationY, translationZ) {
     ]);
 }
 
+// Criar matriz de translação
+function createTranslationMatrix(x, y, z) {
+    return new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        x, y, z, 1
+    ]);
+}
+
+// Multiplicar matrizes 4x4
+function multiplyMatrices(a, b) {
+    const result = new Float32Array(16);
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            result[i * 4 + j] = 
+                a[i * 4 + 0] * b[0 * 4 + j] +
+                a[i * 4 + 1] * b[1 * 4 + j] +
+                a[i * 4 + 2] * b[2 * 4 + j] +
+                a[i * 4 + 3] * b[3 * 4 + j];
+        }
+    }
+    return result;
+}
+
 // Matriz de visualização para câmera FPS
 function createViewMatrix(camera) {
     const cosPitch = Math.cos(camera.pitch);
@@ -200,6 +225,9 @@ gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
 // Variáveis de câmera FPS
 let camera = new Camera();
+let world = new World();
+
+world.addCube(0, 0, 0); 
 
 let keys = {
     w: false,
@@ -288,12 +316,24 @@ function render() {
     // Matriz de visualização da câmera FPS
     const viewMatrix = createViewMatrix(camera);
     
-    // Enviar matrizes para o shader
+    // Enviar matriz de projeção para o shader
     gl.uniformMatrix4fv(projectionMatrixUniform, false, projectionMatrix);
-    gl.uniformMatrix4fv(modelViewMatrixUniform, false, viewMatrix);
     
-    // Desenhar o cubo
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
+    // Desenhar
+
+    world.cubes.forEach((cube) => {
+        // Criar matriz de translação para a posição do cubo
+        const translationMatrix = createTranslationMatrix(cube.position.x, cube.position.y, cube.position.z);
+        
+        // Multiplicar translação pela matriz de visualização (ordem correta: Model * View)
+        const modelViewMatrix = multiplyMatrices(translationMatrix, viewMatrix);
+        
+        // Enviar matriz combinada para o shader
+        gl.uniformMatrix4fv(modelViewMatrixUniform, false, modelViewMatrix);
+        
+        // Desenhar o cubo
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
+    })
 }
 
 // Iniciar animação
