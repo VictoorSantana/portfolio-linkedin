@@ -2,15 +2,17 @@
 
 
 
+
 class World {
 
     cubes = [];
 
     constructor() {}
 
-    addCube(x, y, z) {
+    addCube(x, y, z, type) {
         const newCube = {
             position: { x, y, z },
+            type,
             leftFace: true,
             rightFace: true,
             frontFace: true,

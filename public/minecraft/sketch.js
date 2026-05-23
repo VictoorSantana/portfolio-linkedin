@@ -25,8 +25,10 @@ matrix.init();
 let camera = new Camera();
 let world = new World();
 
-world.addCube(0, 0, 0);
-world.addCube(1, 0, 0);
+world.addCube(0, 0, 0, 'grass');
+world.addCube(1, 0, 0, 'grass');
+world.addCube(1, -1, 0, 'dirt');
+world.addCube(1, -2, 0, 'gray');
 
 let keys = {
     w: false,
@@ -102,7 +104,7 @@ function animate(currentTime) {
 
 
 const cubeGeometry = new Cube();
-const cubeBuffer = cubeGeometry.getBuffer();
+const cubeBuffer =  matrix.createBuffer(cubeGeometry.getVertices(1, 3, 2, 2, 2, 2));
 
 // Carregar textura
 const cubeTexture = matrix.loadTexture('terrain.png');
