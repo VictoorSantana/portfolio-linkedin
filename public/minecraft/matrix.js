@@ -5,15 +5,18 @@
 const vertexShaderSource = `
     attribute vec3 aPosition;
     attribute vec3 aColor;
+    attribute vec2 aTexCoord;
     
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
     
     varying vec3 vColor;
+    varying vec2 vTexCoord;
     
     void main() {
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
         vColor = aColor;
+        vTexCoord = aTexCoord;
     }
 `;
 
@@ -21,9 +24,17 @@ const vertexShaderSource = `
 const fragmentShaderSource = `
     precision mediump float;
     varying vec3 vColor;
+    varying vec2 vTexCoord;
+    
+    uniform sampler2D uTexture;
+    uniform bool uUseTexture;
     
     void main() {
-        gl_FragColor = vec4(vColor, 1.0);
+        if (uUseTexture) {
+            gl_FragColor = texture2D(uTexture, vTexCoord);
+        } else {
+            gl_FragColor = vec4(vColor, 1.0);
+        }
     }
 `;
 
@@ -57,6 +68,8 @@ class Matrix {
         // Configurar uniformes
         this.modelViewMatrixUniform = gl.getUniformLocation(this.program, 'uModelViewMatrix');
         this.projectionMatrixUniform = gl.getUniformLocation(this.program, 'uProjectionMatrix');
+        this.textureUniform = gl.getUniformLocation(this.program, 'uTexture');
+        this.useTextureUniform = gl.getUniformLocation(this.program, 'uUseTexture');
     }
 
     init() {
@@ -174,11 +187,15 @@ class Matrix {
 
         const positionAttribute = gl.getAttribLocation(this.program, 'aPosition');
         gl.enableVertexAttribArray(positionAttribute);
-        gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 24, 0);
+        gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 32, 0);
 
         const colorAttribute = gl.getAttribLocation(this.program, 'aColor');
         gl.enableVertexAttribArray(colorAttribute);
-        gl.vertexAttribPointer(colorAttribute, 3, gl.FLOAT, false, 24, 12);
+        gl.vertexAttribPointer(colorAttribute, 3, gl.FLOAT, false, 32, 12);
+
+        const texCoordAttribute = gl.getAttribLocation(this.program, 'aTexCoord');
+        gl.enableVertexAttribArray(texCoordAttribute);
+        gl.vertexAttribPointer(texCoordAttribute, 2, gl.FLOAT, false, 32, 24);
     }
 
 
@@ -195,5 +212,41 @@ class Matrix {
 
     draw(offset, verticesCount) {
         gl.drawArrays(gl.TRIANGLES, offset, verticesCount);
+    }
+
+    loadTexture(imageUrl) {
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        // Textura temporária 1x1 enquanto carrega
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 255, 255, 255]));
+
+        const image = new Image();
+        image.src = imageUrl;
+        image.onload = () => {
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+            // Pixelado
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        };
+
+        return texture;
+    }
+
+    bindTexture(texture) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(this.textureUniform, 0);
+    }
+
+    setUseTexture(useTexture) {
+        gl.uniform1i(this.useTextureUniform, useTexture ? 1 : 0);
     }
 }

@@ -32,7 +32,8 @@ let keys = {
     w: false,
     a: false,
     s: false,
-    d: false
+    d: false,
+    t: false
 };
 
 let isPointerLocked = false;
@@ -103,21 +104,24 @@ function animate(currentTime) {
 const cubeGeometry = new Cube();
 const cubeBuffer = cubeGeometry.getBuffer();
 
+// Carregar textura
+const cubeTexture = matrix.loadTexture('terrain.png');
+
 // Função de renderização
 function render() {
     const { viewMatrix } = matrix.createProjectionAndViewMatrix(camera);
 
     //--- BEGIN: CUBE DRAW ---
-    
-
     matrix.setupBuffer(cubeBuffer);
+    matrix.bindTexture(cubeTexture);
+    matrix.setUseTexture(!keys.t);
 
     const faceVertexCount = 6;
 
     world.cubes.forEach((cube) => {
         matrix.translate(viewMatrix, cube.position);
 
-        // Desenhar apenas as faces ativas (cada face tem 6 vértices)        
+        // Desenhar apenas as faces ativas (cada face tem 6 vértices)
         let offset = 0;
 
         // Face frontal (z = 0.5) - offset 0

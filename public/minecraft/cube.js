@@ -2,64 +2,88 @@
 
 
 class Cube {
-
-
-    vertices = [
-        // Face frontal (z = 0.5)
-        -0.5, -0.5, 0.5, 1.0, 0.0, 0.0,  // vermelho
-        0.5, -0.5, 0.5, 1.0, 0.0, 0.0,
-        0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
-        -0.5, -0.5, 0.5, 1.0, 0.0, 0.0,
-        0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
-        -0.5, 0.5, 0.5, 1.0, 0.0, 0.0,
-
-        // Face traseira (z = -0.5)
-        -0.5, -0.5, -0.5, 0.0, 1.0, 0.0,  // verde
-        -0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
-        0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
-        -0.5, -0.5, -0.5, 0.0, 1.0, 0.0,
-        0.5, 0.5, -0.5, 0.0, 1.0, 0.0,
-        0.5, -0.5, -0.5, 0.0, 1.0, 0.0,
-
-        // Face superior (y = 0.5)
-        -0.5, 0.5, -0.5, 0.0, 0.0, 1.0,  // azul
-        -0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
-        0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
-        -0.5, 0.5, -0.5, 0.0, 0.0, 1.0,
-        0.5, 0.5, 0.5, 0.0, 0.0, 1.0,
-        0.5, 0.5, -0.5, 0.0, 0.0, 1.0,
-
-        // Face inferior (y = -0.5)
-        -0.5, -0.5, -0.5, 1.0, 1.0, 0.0,  // amarelo
-        0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-        0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-        -0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-        0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-        -0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-
-        // Face direita (x = 0.5)
-        0.5, -0.5, -0.5, 1.0, 0.0, 1.0,  // magenta
-        0.5, 0.5, -0.5, 1.0, 0.0, 1.0,
-        0.5, 0.5, 0.5, 1.0, 0.0, 1.0,
-        0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
-        0.5, 0.5, 0.5, 1.0, 0.0, 1.0,
-        0.5, -0.5, 0.5, 1.0, 0.0, 1.0,
-
-        // Face esquerda (x = -0.5)
-        -0.5, -0.5, -0.5, 0.0, 1.0, 1.0,  // ciano
-        -0.5, -0.5, 0.5, 0.0, 1.0, 1.0,
-        -0.5, 0.5, 0.5, 0.0, 1.0, 1.0,
-        -0.5, -0.5, -0.5, 0.0, 1.0, 1.0,
-        -0.5, 0.5, 0.5, 0.0, 1.0, 1.0,
-        -0.5, 0.5, -0.5, 0.0, 1.0, 1.0
-    ];
+    
+    slotSize = 16;
 
     constructor() { }
 
     getBuffer() {
         const buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.getVertices()), gl.STATIC_DRAW);
         return buffer;
+    }
+
+    pixelToUv(x, y) {
+        return [x / 128, y / 128]; //textura 128x128
+    }
+
+    getVertices(
+        topSlot,
+        bottomSlot,
+        frontSlot,
+        backSlot,
+        leftSlot,
+        rightSlot
+    ) {
+
+
+        const geometry = [
+            // Face frontal // vermelho
+            { pos: [0.5, 0.5, 0.5], rgb: [1.0, 0.0, 0.0], uv: this.pixelToUv(32, 0) },
+            { pos: [-0.5, -0.5, 0.5], rgb: [1.0, 0.0, 0.0], uv: this.pixelToUv(16, 16) },
+            { pos: [0.5, -0.5, 0.5], rgb: [1.0, 0.0, 0.0], uv: this.pixelToUv(32, 16) },
+            
+            { pos: [-0.5, -0.5, 0.5], rgb: [1.0, 0.0, 0.0], uv: this.pixelToUv(16, 16) },
+            { pos: [0.5, 0.5, 0.5], rgb: [1.0, 0.0, 0.0], uv: this.pixelToUv(32, 0) },
+            { pos: [-0.5, 0.5, 0.5], rgb: [1.0, 0.0, 0.0], uv: this.pixelToUv(16, 0) },
+
+            // Face traseira // verde
+            { pos: [-0.5, -0.5, -0.5], rgb: [0.0, 1.0, 0.0], uv: this.pixelToUv(32, 16) },
+            { pos: [-0.5, 0.5, -0.5], rgb: [0.0, 1.0, 0.0], uv: this.pixelToUv(32, 0) },
+            { pos: [0.5, 0.5, -0.5], rgb: [0.0, 1.0, 0.0], uv: this.pixelToUv(16, 0) },
+
+            { pos: [-0.5, -0.5, -0.5], rgb: [0.0, 1.0, 0.0], uv: this.pixelToUv(32, 16) },
+            { pos: [0.5, 0.5, -0.5], rgb: [0.0, 1.0, 0.0], uv: this.pixelToUv(16, 0) },
+            { pos: [0.5, -0.5, -0.5], rgb: [0.0, 1.0, 0.0], uv: this.pixelToUv(16, 16) },
+
+            // Face superior // azul
+            { pos: [-0.5, 0.5, -0.5], rgb: [0.0, 0.0, 1.0], uv: this.pixelToUv(0, 0) },
+            { pos: [-0.5, 0.5, 0.5], rgb: [0.0, 0.0, 1.0], uv: this.pixelToUv(0, 16) },
+            { pos: [0.5, 0.5, 0.5], rgb: [0.0, 0.0, 1.0], uv: this.pixelToUv(16, 16) },
+
+            { pos: [-0.5, 0.5, -0.5], rgb: [0.0, 0.0, 1.0], uv: this.pixelToUv(0, 0) },
+            { pos: [0.5, 0.5, 0.5], rgb: [0.0, 0.0, 1.0], uv: this.pixelToUv(16, 16) },
+            { pos: [0.5, 0.5, -0.5], rgb: [0.0, 0.0, 1.0], uv: this.pixelToUv(16, 0) },
+
+            // Face inferior // amarelo
+            { pos: [-0.5, -0.5, -0.5], rgb: [1.0, 1.0, 0.0], uv: this.pixelToUv(32, 16) },
+            { pos: [0.5, -0.5, -0.5], rgb: [1.0, 1.0, 0.0], uv: this.pixelToUv(48, 16) },
+            { pos: [0.5, -0.5, 0.5], rgb: [1.0, 1.0, 0.0], uv: this.pixelToUv(48, 0) },
+
+            { pos: [-0.5, -0.5, -0.5], rgb: [1.0, 1.0, 0.0], uv: this.pixelToUv(32, 16) },
+            { pos: [0.5, -0.5, 0.5], rgb: [1.0, 1.0, 0.0], uv: this.pixelToUv(48, 0) },
+            { pos: [-0.5, -0.5, 0.5], rgb: [1.0, 1.0, 0.0], uv: this.pixelToUv(32, 0) },
+
+            // Face direita // magenta
+            { pos: [0.5, -0.5, -0.5], rgb: [1.0, 0.0, 1.0], uv: this.pixelToUv(32, 16) },
+            { pos: [0.5, 0.5, -0.5], rgb: [1.0, 0.0, 1.0], uv: this.pixelToUv(32, 0) },
+            { pos: [0.5, 0.5, 0.5], rgb: [1.0, 1.0, 1.0], uv: this.pixelToUv(16, 0) },
+
+            { pos: [0.5, -0.5, -0.5], rgb: [1.0, 0.0, 1.0], uv: this.pixelToUv(32, 16) },
+            { pos: [0.5, 0.5, 0.5], rgb: [1.0, 1.0, 1.0], uv: this.pixelToUv(16, 0) },
+            { pos: [0.5, -0.5, 0.5], rgb: [1.0, 1.0, 1.0], uv: this.pixelToUv(16, 16) },
+
+            // Face esquerda // ciano
+            { pos: [-0.5, -0.5, -0.5], rgb: [0.0, 1.0, 1.0], uv: this.pixelToUv(16, 16) },
+            { pos: [-0.5, -0.5, 0.5], rgb: [0.0, 1.0, 1.0], uv: this.pixelToUv(32, 16) },
+            { pos: [-0.5, 0.5, 0.5], rgb: [1.0, 1.0, 1.0], uv: this.pixelToUv(32, 0) },
+
+            { pos: [-0.5, -0.5, -0.5], rgb: [0.0, 1.0, 1.0], uv: this.pixelToUv(16, 16) },
+            { pos: [-0.5, 0.5, 0.5], rgb: [0.0, 1.0, 1.0], uv: this.pixelToUv(32, 0) },
+            { pos: [-0.5, 0.5, -0.5], rgb: [0.0, 1.0, 1.0], uv: this.pixelToUv(16, 0) }
+        ];
+
+        return geometry.map((g) => [...g.pos, ...g.rgb, ...g.uv]).flat();
     }
 }
