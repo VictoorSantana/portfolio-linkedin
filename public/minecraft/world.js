@@ -6,13 +6,10 @@ class World {
 
     cubes = [];
 
-    constructor() {
-        // Inicializar o mundo
-    }
-
+    constructor() {}
 
     addCube(x, y, z) {
-        const cube = {
+        const newCube = {
             position: { x, y, z },
             leftFace: true,
             rightFace: true,
@@ -24,49 +21,49 @@ class World {
         };
 
         for (const other of this.cubes) {
-            
+
             const ox = other.position.x;
             const oy = other.position.y;
             const oz = other.position.z;
 
             // direita
             if (ox === x + 1 && oy === y && oz === z) {
-                cube.rightFace = false;
+                newCube.rightFace = false;
                 other.leftFace = false;
             }
 
             // esquerda
             if (ox === x - 1 && oy === y && oz === z) {
-                cube.leftFace = false;
+                newCube.leftFace = false;
                 other.rightFace = false;
             }
 
             // cima
             if (ox === x && oy === y + 1 && oz === z) {
-                cube.topFace = false;
+                newCube.topFace = false;
                 other.bottomFace = false;
             }
 
             // baixo
             if (ox === x && oy === y - 1 && oz === z) {
-                cube.bottomFace = false;
+                newCube.bottomFace = false;
                 other.topFace = false;
             }
 
             // frente
             if (ox === x && oy === y && oz === z + 1) {
-                cube.frontFace = false;
+                newCube.frontFace = false;
                 other.backFace = false;
             }
 
             // trás
             if (ox === x && oy === y && oz === z - 1) {
-                cube.backFace = false;
+                newCube.backFace = false;
                 other.frontFace = false;
             }
         }
 
-        this.cubes.push(cube);
+        this.cubes.push(newCube);
     }
 
     // Função para remover um cubo específico
@@ -84,21 +81,5 @@ class World {
     clearAllCubes() {
         this.cubes = [];
         console.log('Todos os cubos foram removidos');
-    }
-
-
-    // Multiplicar matrizes 4x4
-    multiplyMatrices(a, b) {
-        const result = new Float32Array(16);
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                result[i * 4 + j] =
-                    a[i * 4 + 0] * b[0 * 4 + j] +
-                    a[i * 4 + 1] * b[1 * 4 + j] +
-                    a[i * 4 + 2] * b[2 * 4 + j] +
-                    a[i * 4 + 3] * b[3 * 4 + j];
-            }
-        }
-        return result;
     }
 }
