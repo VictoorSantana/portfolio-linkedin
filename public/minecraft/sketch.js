@@ -104,7 +104,7 @@ function animate(currentTime) {
 
 
 const cubeGeometry = new Cube();
-const cubeBuffer =  matrix.createBuffer(cubeGeometry.getVertices(1, 3, 2, 2, 2, 2));
+const cubeBuffer =  matrix.createBuffer(cubeGeometry.getVertices());
 
 // Carregar textura
 const cubeTexture = matrix.loadTexture('terrain.png');
@@ -122,6 +122,16 @@ function render() {
 
     world.cubes.forEach((cube) => {
         matrix.translate(viewMatrix, cube.position);
+
+
+        const blockType = BLOCK_TYPES[cube.type];
+        if (blockType) {
+            if (!blockType.uvBuffer) {
+                blockType.uvBuffer = matrix.createBuffer(blockType.uv);
+            }
+            // console.log('called');
+            matrix.updateBuffer(cubeBuffer, 24, blockType.uv);
+        }
 
         // Desenhar apenas as faces ativas (cada face tem 6 vértices)
         let offset = 0;

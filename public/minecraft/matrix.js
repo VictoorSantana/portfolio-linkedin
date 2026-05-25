@@ -198,6 +198,15 @@ class Matrix {
         gl.vertexAttribPointer(texCoordAttribute, 2, gl.FLOAT, false, 32, 24);
     }
 
+    updateBuffer(buffer, offset, newData) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+        gl.bufferSubData(
+            gl.ARRAY_BUFFER,
+            offset,
+            new Float32Array(newData)
+        );
+    }
 
     translate(viewMatrix, { x, y, z }) {
         // Criar matriz de translação para a posição do cubo
