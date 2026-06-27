@@ -140,35 +140,37 @@ const staticObjs = [];
 function loadModel(name) {
     loader.staticObj(`models/${name}/static.obj`)
         .then((res) => {
-            console.log(res);
             presets[name] = {
                 buffer: matrix.createBuffer(res),                
                 texture: matrix.loadTexture(`models/${name}/skin.jpg`),
             };
 
+            console.log(name, 'vertices count', res.length / 8)
+
             staticObjs.push({
                 length: res.length / 8,
                 name,
-                position: { x: 0, y: 0, z: 0 },
+                location: { x: 0, y: 0, z: 0 },
+                rotation: { x: 0, y: 0, z: 0 },
             });
         });
 }
 
-
-presets['test'] = {
+presets['test2'] = {
     buffer: matrix.createBuffer(cubeGeometry.getVertices()),
     texture: matrix.loadTexture('bricks_2.jpg'),
 };
 
 staticObjs.push({
     length: cubeGeometry.getVertices().length,
-    name: 'test',
-    position: { x: 5, y: 0, z: 0 },
+    name: 'test2',
+    location: { x: 5, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
 });
 
 // loadModel('caixa');
-// loadModel('chest');
-loadModel('life');
+loadModel('test');
+// loadModel('life');
 
 let lastPreset = '';
 
@@ -181,7 +183,8 @@ function render() {
     matrix.setUseTexture(!keys.t);
 
     for (const obj of staticObjs) {
-        matrix.translate(viewMatrix, obj.position);
+        matrix.translate(viewMatrix, obj.location);
+        matrix.rotate(viewMatrix, obj.rotation);
 
         if (obj.name !== lastPreset) {
             lastPreset = obj.name;

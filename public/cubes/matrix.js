@@ -9,6 +9,7 @@ const vertexShaderSource = `
     
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
+    uniform mat4 uModelRotationMatrix;
 
     uniform vec2 uTexOffset;
     
@@ -46,6 +47,7 @@ class Matrix {
 
     program;
     modelViewMatrixUniform;
+    modelRotationMatrixUniform;
     projectionMatrixUniform;
 
     constructor() { }
@@ -69,6 +71,7 @@ class Matrix {
 
         // Configurar uniformes
         this.modelViewMatrixUniform = gl.getUniformLocation(this.program, 'uModelViewMatrix');
+        this.modelRotationMatrixUniform = gl.getUniformLocation(this.program, 'uModelRotationMatrix');
         this.projectionMatrixUniform = gl.getUniformLocation(this.program, 'uProjectionMatrix');
         this.textureUniform = gl.getUniformLocation(this.program, 'uTexture');
         this.useTextureUniform = gl.getUniformLocation(this.program, 'uUseTexture');
@@ -152,6 +155,23 @@ class Matrix {
         ]);
     }
 
+    // Criar matriz de rotação
+    createRotationMatrix(x, y, z) {
+        const cosX = Math.cos(x);
+        const sinX = Math.sin(x);
+        const cosY = Math.cos(y);
+        const sinY = Math.sin(y);
+        const cosZ = Math.cos(z);
+        const sinZ = Math.sin(z);
+
+        return new Float32Array([
+            cosY * cosZ, -cosY * sinZ, sinY, 0,
+            cosX * sinZ + sinX * sinY * cosZ, cosX * cosZ - sinX * sinY * sinZ, -sinX * cosY, 0,
+            sinX * sinZ - cosX * sinY * cosZ, sinX * cosZ + cosX * sinY * sinZ, cosX * cosY, 0,
+            0, 0, 0, 1
+        ]);
+    }
+
     // Funções de matriz
     createPerspectiveMatrix(fov, aspect, near, far) {
         const f = 1.0 / Math.tan(fov * Math.PI / 360);
@@ -209,6 +229,17 @@ class Matrix {
 
         // Enviar matriz combinada para o shader
         gl.uniformMatrix4fv(matrix.modelViewMatrixUniform, false, modelViewMatrix);        
+    }
+
+    rotate(viewMatrix, { x, y, z }) {
+        // Criar matriz de rotação para a posição do cubo
+        const rotationMatrix = matrix.createRotationMatrix(x, y, z);
+
+        // Multiplicar rotação pela matriz de visualização (ordem correta: Model * View)
+        const modelViewMatrix = matrix.multiplyMatrices4x4(rotationMatrix, viewMatrix);
+
+        // Enviar matriz combinada para o shader
+        gl.uniformMatrix4fv(matrix.modelRotationMatrixUniform, false, modelViewMatrix);        
     }
 
     draw(offset, verticesCount) {

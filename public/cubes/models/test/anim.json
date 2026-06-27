@@ -1,0 +1,289 @@
+{
+    "bones": [
+        {
+            "name": "Bone",
+            "parent": null,
+            "head": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "tail": [
+                0.0,
+                0.0,
+                2.6454017162323
+            ]
+        }
+    ],
+    "weights": [
+        {
+            "vertex": 0,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 1,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 2,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 3,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 4,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 5,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 6,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        },
+        {
+            "vertex": 7,
+            "weights": [
+                {
+                    "bone": "Bone",
+                    "weight": 1.0
+                }
+            ]
+        }
+    ],
+    "animations": [
+        {
+            "name": "ArmatureAction",
+            "keyframes": [
+                {
+                    "frame": 1,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 2,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -0.08558949083089828
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 3,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -0.31496933102607727
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 4,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -0.6470565795898438
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 5,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -1.0407681465148926
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 6,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -1.4550213813781738
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 7,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -1.8487331867218018
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 8,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -2.1808199882507324
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 9,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -2.4102001190185547
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "frame": 10,
+                    "bones": [
+                        {
+                            "name": "Bone",
+                            "location": [
+                                0.0,
+                                0.0,
+                                -2.4957895278930664
+                            ],
+                            "rotation": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

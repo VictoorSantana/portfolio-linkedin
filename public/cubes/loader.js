@@ -1,10 +1,14 @@
 
 
+
 class Loader {
     
 
     async staticObj(url) {
         const text = await fetch(url).then(r => r.text());
+
+        //blender exporta uv .obj de cabeça para baixo
+        const isUpsideDown = text.includes('# Blender');
 
         const positions = [];
         const uvs = [];
@@ -24,10 +28,17 @@ class Loader {
             }
 
             else if (parts[0] === 'vt') {
-                uvs.push([
-                    parseFloat(parts[1]),
-                    parseFloat(parts[2])
-                ]);
+                if (isUpsideDown) {
+                    uvs.push([
+                        parseFloat(parts[1]),
+                        1 - parseFloat(parts[2])
+                    ]);
+                } else {
+                    uvs.push([
+                        parseFloat(parts[1]),
+                        parseFloat(parts[2])
+                    ]);
+                }
             }
 
             else if (parts[0] === 'f') {
@@ -52,6 +63,13 @@ class Loader {
             }
         }
 
+        //[vertex_x, vertex_y, vertex_z, color_r, color_g, color_b, uv_x, uv_y]
         return vertices;    
+    }
+
+    async dinamicObj(url) {
+        const text = await fetch(url).then(r => r.text());
+
+        console.log(text);
     }
 }
