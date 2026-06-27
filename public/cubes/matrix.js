@@ -7,16 +7,38 @@ const vertexShaderSource = `
     attribute vec3 aColor;
     attribute vec2 aTexCoord;
     
+    // Bone attributes (up to 4 bones per vertex)
+    attribute vec4 aBoneIndices;
+    attribute vec4 aBoneWeights;
+    
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
+    uniform mat4 uBoneMatrices[32]; // Support up to 32 bones
 
     uniform vec2 uTexOffset;
+    uniform bool uUseAnimation;
     
     varying vec3 vColor;
     varying vec2 vTexCoord;
     
     void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+        vec4 skinnedPosition = vec4(aPosition, 1.0);
+        
+        if (uUseAnimation) {
+            skinnedPosition = vec4(0.0);
+            
+            // Apply bone transformations
+            for (int i = 0; i < 4; i++) {
+                if (aBoneWeights[i] > 0.0) {
+                    int boneIndex = int(aBoneIndices[i]);
+                    mat4 boneMatrix = uBoneMatrices[boneIndex];
+                    vec4 bonePosition = boneMatrix * vec4(aPosition, 1.0);
+                    skinnedPosition += bonePosition * aBoneWeights[i];
+                }
+            }
+        }
+        
+        gl_Position = uProjectionMatrix * uModelViewMatrix * skinnedPosition;
         vColor = aColor;
         vTexCoord = aTexCoord + uTexOffset;
     }
@@ -72,6 +94,8 @@ class Matrix {
         this.projectionMatrixUniform = gl.getUniformLocation(this.program, 'uProjectionMatrix');
         this.textureUniform = gl.getUniformLocation(this.program, 'uTexture');
         this.useTextureUniform = gl.getUniformLocation(this.program, 'uUseTexture');
+        this.useAnimationUniform = gl.getUniformLocation(this.program, 'uUseAnimation');
+        this.boneMatricesUniform = gl.getUniformLocation(this.program, 'uBoneMatrices');
     }
 
     init() {
@@ -222,20 +246,30 @@ class Matrix {
     }
 
     // Função para configurar atributos do buffer
-    setupBuffer(buffer) {
+    setupBuffer(buffer, hasAnimation = false) {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
         const positionAttribute = gl.getAttribLocation(this.program, 'aPosition');
         gl.enableVertexAttribArray(positionAttribute);
-        gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 32, 0);
+        gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, hasAnimation ? 64 : 32, 0);
 
         const colorAttribute = gl.getAttribLocation(this.program, 'aColor');
         gl.enableVertexAttribArray(colorAttribute);
-        gl.vertexAttribPointer(colorAttribute, 3, gl.FLOAT, false, 32, 12);
+        gl.vertexAttribPointer(colorAttribute, 3, gl.FLOAT, false, hasAnimation ? 64 : 32, 12);
 
         const texCoordAttribute = gl.getAttribLocation(this.program, 'aTexCoord');
         gl.enableVertexAttribArray(texCoordAttribute);
-        gl.vertexAttribPointer(texCoordAttribute, 2, gl.FLOAT, false, 32, 24);
+        gl.vertexAttribPointer(texCoordAttribute, 2, gl.FLOAT, false, hasAnimation ? 64 : 32, 24);
+
+        if (hasAnimation) {
+            const boneIndicesAttribute = gl.getAttribLocation(this.program, 'aBoneIndices');
+            gl.enableVertexAttribArray(boneIndicesAttribute);
+            gl.vertexAttribPointer(boneIndicesAttribute, 4, gl.FLOAT, false, 64, 32);
+
+            const boneWeightsAttribute = gl.getAttribLocation(this.program, 'aBoneWeights');
+            gl.enableVertexAttribArray(boneWeightsAttribute);
+            gl.vertexAttribPointer(boneWeightsAttribute, 4, gl.FLOAT, false, 64, 48);
+        }
     }
 
     translate(viewMatrix, { x, y, z }) {
@@ -303,5 +337,18 @@ class Matrix {
 
     setUseTexture(useTexture) {
         gl.uniform1i(this.useTextureUniform, useTexture ? 1 : 0);
+    }
+
+    setUseAnimation(useAnimation) {
+        gl.uniform1i(this.useAnimationUniform, useAnimation ? 1 : 0);
+    }
+
+    setBoneMatrices(boneMatrices) {
+        // Flatten the array of matrices into a single Float32Array
+        const flattened = new Float32Array(boneMatrices.length * 16);
+        for (let i = 0; i < boneMatrices.length; i++) {
+            flattened.set(boneMatrices[i], i * 16);
+        }
+        gl.uniformMatrix4fv(this.boneMatricesUniform, false, flattened);
     }
 }

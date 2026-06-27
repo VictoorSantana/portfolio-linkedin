@@ -124,23 +124,33 @@ function animate(currentTime) {
         updateCamera(deltaTime);
     }
 
-    render();
+    // Atualizar animação e armazenar bone matrices
+    currentBoneMatrices = animationController.update(deltaTime);
+
+    render(deltaTime);
     requestAnimationFrame(animate);
 }
 
 
 const cubeGeometry = new Cube();
 const loader = new Loader();
+const animationController = new AnimationController();
 
 const presets = {};
 const staticObjs = [];
+let currentBoneMatrices = null;
 
 loader.loadModel('test').then((res) => {
     presets[res.name] = {
         buffer: res.modelBuffer,
         texture: res.texture,
+        hasAnimation: res.hasAnimation,
+        boneCount: res.boneCount,
     };
-    
+
+    animationController.setAnimation(res.animation);
+    animationController.play();
+
     staticObjs.push({
         verticesCount: res.verticesCount,
         name: res.name,
@@ -165,7 +175,7 @@ staticObjs.push({
 let lastPreset = '';
 
 // Função de renderização
-function render() {
+function render(deltaTime) {
     const { viewMatrix } = matrix.createProjectionAndViewMatrix(camera);
 
     matrix.setUseTexture(!keys.t);
@@ -175,15 +185,25 @@ function render() {
 
         if (obj.name !== lastPreset) {
             lastPreset = obj.name;
-            matrix.setupBuffer(presets[obj.name].buffer);
-            matrix.bindTexture(presets[obj.name].texture);
+            const preset = presets[obj.name];
+            matrix.setupBuffer(preset.buffer, preset.hasAnimation || false);
+            matrix.bindTexture(preset.texture);
+
+            if (preset.hasAnimation) {
+                matrix.setUseAnimation(true);
+            } else {
+                matrix.setUseAnimation(false);
+            }
         }
 
+        // Enviar bone matrices se o objeto tem animação
+        const preset = presets[obj.name];
+        if (preset.hasAnimation && currentBoneMatrices) {
+            matrix.setBoneMatrices(currentBoneMatrices);
+        }
 
         matrix.draw(0, obj.verticesCount);
     }
-
-    
 }
 
 // Iniciar animação

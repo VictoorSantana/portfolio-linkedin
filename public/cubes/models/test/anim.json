@@ -1,4 +1,5 @@
 {
+    "speed": 0.3,
     "bones": [
         {
             "name": "Bone",
