@@ -151,6 +151,44 @@ class Matrix {
             x, y, z, 1
         ]);
     }
+
+    // Criar matriz de rotação (ângulos em radianos)
+    createRotationMatrix(x, y, z) {
+        const cosX = Math.cos(x);
+        const sinX = Math.sin(x);
+        const cosY = Math.cos(y);
+        const sinY = Math.sin(y);
+        const cosZ = Math.cos(z);
+        const sinZ = Math.sin(z);
+
+        // Matriz de rotação X
+        const rotX = new Float32Array([
+            1, 0, 0, 0,
+            0, cosX, sinX, 0,
+            0, -sinX, cosX, 0,
+            0, 0, 0, 1
+        ]);
+
+        // Matriz de rotação Y
+        const rotY = new Float32Array([
+            cosY, 0, -sinY, 0,
+            0, 1, 0, 0,
+            sinY, 0, cosY, 0,
+            0, 0, 0, 1
+        ]);
+
+        // Matriz de rotação Z
+        const rotZ = new Float32Array([
+            cosZ, sinZ, 0, 0,
+            -sinZ, cosZ, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ]);
+
+        // Combinar rotações: Z * Y * X
+        const temp = this.multiplyMatrices4x4(rotZ, rotY);
+        return this.multiplyMatrices4x4(temp, rotX);
+    }
     
     // Funções de matriz
     createPerspectiveMatrix(fov, aspect, near, far) {
@@ -205,10 +243,26 @@ class Matrix {
         const translationMatrix = matrix.createTranslationMatrix(x, y, z);
 
         // Multiplicar translação pela matriz de visualização (ordem correta: Model * View)
-        const modelViewMatrix = matrix.multiplyMatrices4x4(translationMatrix, viewMatrix);
+        return this.multiplyMatrices4x4(translationMatrix, viewMatrix);
+    }
+
+    rotate(viewMatrix, { x, y, z }) {
+        // Criar matriz de rotação para o cubo
+        const rotationMatrix = this.createRotationMatrix(x, y, z);
+
+        // Multiplicar rotação pela matriz de visualização (ordem correta: Model * View)
+        return this.multiplyMatrices4x4(rotationMatrix, viewMatrix);
+    }
+
+    transform(viewMatrix, location, rotation) {
+        // Aplicar rotação primeiro
+        const rotatedMatrix = this.rotate(viewMatrix, rotation);
+
+        // Aplicar translação depois
+        const modelViewMatrix = this.translate(rotatedMatrix, location);
 
         // Enviar matriz combinada para o shader
-        gl.uniformMatrix4fv(matrix.modelViewMatrixUniform, false, modelViewMatrix);        
+        gl.uniformMatrix4fv(this.modelViewMatrixUniform, false, modelViewMatrix);
     }
 
     draw(offset, verticesCount) {

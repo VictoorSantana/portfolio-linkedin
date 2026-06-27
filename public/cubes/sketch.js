@@ -145,8 +145,6 @@ function loadModel(name) {
                 texture: matrix.loadTexture(`models/${name}/skin.jpg`),
             };
 
-            console.log(name, 'vertices count', res.length / 8)
-
             staticObjs.push({
                 length: res.length / 8,
                 name,
@@ -165,7 +163,7 @@ staticObjs.push({
     length: cubeGeometry.getVertices().length,
     name: 'test2',
     location: { x: 5, y: 0, z: 0 },
-    rotation: { x: 5, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
 });
 
 // loadModel('caixa');
@@ -178,13 +176,10 @@ let lastPreset = '';
 function render() {
     const { viewMatrix } = matrix.createProjectionAndViewMatrix(camera);
 
-  
-    
     matrix.setUseTexture(!keys.t);
 
     for (const obj of staticObjs) {
-        matrix.translate(viewMatrix, obj.location);
-        matrix.rotate(viewMatrix, obj.rotation);
+        matrix.transform(viewMatrix, obj.location, obj.rotation);
 
         if (obj.name !== lastPreset) {
             lastPreset = obj.name;
@@ -192,15 +187,9 @@ function render() {
             matrix.bindTexture(presets[obj.name].texture);
         }
 
-        
+
         matrix.draw(0, obj.length);
     }
-
-    
-
-  
-
-  
 
     
 }
