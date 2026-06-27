@@ -23,13 +23,38 @@ matrix.init();
 
 // Variáveis de câmera FPS
 let camera = new Camera();
-let world = new World();
+// let world = new World();
 
-world.addCube(0, 0, 0, 'grass');
-world.addCube(1, 0, 0, 'grass');
-world.addCube(2, 0, 0, 'grass');
-// world.addCube(1, -1, 0, 'dirt');
-// world.addCube(1, -2, 0, 'gray');
+// camera.x = -8.763815528327472;
+// camera.y = 4.908732461022608;
+// camera.z = 7.696229335706122;
+// camera.yaw = -1.4040000000000132;
+// camera.pitch = -0.34279632679489547;
+// camera.speed = 5;
+
+// for (let i = 0; i < 16; i++) {
+//     for (let j = 0; j < 16; j++) {
+//         world.addCube(i, 0, j);
+//     }
+// }
+
+// for(let i = 0; i < 8; i++) {
+//     for(let j = 0; j < 16; j++) {
+//         world.addCube(0, i, j);
+//         world.addCube(15, i, j);
+//         world.addCube(j, i, 0);
+//         world.addCube(j, i, 15);
+//     }
+// }
+
+
+// world.addCube(0, 0, 0);
+// world.addCube(1, 0, 0);
+// world.addCube(2, 0, 0);
+// world.addCube(1, -1, 0);
+// world.addCube(1, -2, 0);
+
+
 
 let keys = {
     w: false,
@@ -105,72 +130,74 @@ function animate(currentTime) {
 
 
 const cubeGeometry = new Cube();
-const cubeBuffer =  matrix.createBuffer(cubeGeometry.getVertices());
+// const cubeBuffer = matrix.createBuffer(cubeGeometry.getVertices());
 
-// console.log(cubeBuffer);
+const loader = new Loader();
 
-// Carregar textura
-const cubeTexture = matrix.loadTexture('bricks_2.jpg');
+const presets = {};
+const staticObjs = [];
 
-const offsetLoc = gl.getUniformLocation(matrix.program, "uTexOffset");
+function loadModel(name) {
+    loader.staticObj(`models/${name}/static.obj`)
+        .then((res) => {
+            console.log(res);
+            presets[name] = {
+                buffer: matrix.createBuffer(res),                
+                texture: matrix.loadTexture(`models/${name}/skin.jpg`),
+            };
+
+            staticObjs.push({
+                length: res.length / 8,
+                name,
+                position: { x: 0, y: 0, z: 0 },
+            });
+        });
+}
+
+
+presets['test'] = {
+    buffer: matrix.createBuffer(cubeGeometry.getVertices()),
+    texture: matrix.loadTexture('bricks_2.jpg'),
+};
+
+staticObjs.push({
+    length: cubeGeometry.getVertices().length,
+    name: 'test',
+    position: { x: 5, y: 0, z: 0 },
+});
+
+// loadModel('caixa');
+// loadModel('chest');
+loadModel('life');
+
+let lastPreset = '';
 
 // Função de renderização
 function render() {
     const { viewMatrix } = matrix.createProjectionAndViewMatrix(camera);
 
-    //--- BEGIN: CUBE DRAW ---
-    matrix.setupBuffer(cubeBuffer);
-    matrix.bindTexture(cubeTexture);
+  
+    
     matrix.setUseTexture(!keys.t);
 
-    const faceVertexCount = 6;
+    for (const obj of staticObjs) {
+        matrix.translate(viewMatrix, obj.position);
 
-    world.cubes.forEach((cube, index) => {
-
-        gl.uniform2f(offsetLoc, index * 0.25, 0.0);
-
-        matrix.translate(viewMatrix, cube.position);
-
-        // Desenhar apenas as faces ativas (cada face tem 6 vértices)
-        let offset = 0;
-
-        // Face frontal (z = 0.5) - offset 0
-        if (cube.frontFace) {
-            matrix.draw(offset, faceVertexCount);
-        }
-        offset += faceVertexCount;
-
-        // Face traseira (z = -0.5) - offset 6
-        if (cube.backFace) {
-            matrix.draw(offset, faceVertexCount);
-        }
-        offset += faceVertexCount;
-
-        // Face superior (y = 0.5) - offset 12
-        if (cube.topFace) {
-            matrix.draw(offset, faceVertexCount);
-        }
-        offset += faceVertexCount;
-
-        // Face inferior (y = -0.5) - offset 18
-        if (cube.bottomFace) {
-            matrix.draw(offset, faceVertexCount);
-        }
-        offset += faceVertexCount;
-
-        // Face direita (x = 0.5) - offset 24
-        if (cube.rightFace) {
-            matrix.draw(offset, faceVertexCount);
-        }
-        offset += faceVertexCount;
-
-        // Face esquerda (x = -0.5) - offset 30
-        if (cube.leftFace) {
-            matrix.draw(offset, faceVertexCount);
+        if (obj.name !== lastPreset) {
+            lastPreset = obj.name;
+            matrix.setupBuffer(presets[obj.name].buffer);
+            matrix.bindTexture(presets[obj.name].texture);
         }
 
-    });
-    //--- END: CUBE DRAW ---
+        
+        matrix.draw(0, obj.length);
+    }
+
+    
+
+  
+
+  
 
     
 }
