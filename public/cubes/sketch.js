@@ -130,29 +130,24 @@ function animate(currentTime) {
 
 
 const cubeGeometry = new Cube();
-// const cubeBuffer = matrix.createBuffer(cubeGeometry.getVertices());
-
 const loader = new Loader();
 
 const presets = {};
 const staticObjs = [];
 
-function loadModel(name) {
-    loader.staticObj(`models/${name}/static.obj`)
-        .then((res) => {
-            presets[name] = {
-                buffer: matrix.createBuffer(res),                
-                texture: matrix.loadTexture(`models/${name}/skin.jpg`),
-            };
-
-            staticObjs.push({
-                length: res.length / 8,
-                name,
-                location: { x: 0, y: 0, z: 0 },
-                rotation: { x: 0, y: 0, z: 0 },
-            });
-        });
-}
+loader.loadModel('test').then((res) => {
+    presets[res.name] = {
+        buffer: res.modelBuffer,
+        texture: res.texture,
+    };
+    
+    staticObjs.push({
+        verticesCount: res.verticesCount,
+        name: res.name,
+        location: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+    });
+});
 
 presets['test2'] = {
     buffer: matrix.createBuffer(cubeGeometry.getVertices()),
@@ -160,15 +155,12 @@ presets['test2'] = {
 };
 
 staticObjs.push({
-    length: cubeGeometry.getVertices().length,
+    verticesCount: cubeGeometry.getVertices().length,
     name: 'test2',
     location: { x: 5, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
 });
 
-// loadModel('caixa');
-loadModel('test');
-// loadModel('life');
 
 let lastPreset = '';
 
@@ -188,7 +180,7 @@ function render() {
         }
 
 
-        matrix.draw(0, obj.length);
+        matrix.draw(0, obj.verticesCount);
     }
 
     
