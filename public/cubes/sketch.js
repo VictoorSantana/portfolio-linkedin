@@ -165,7 +165,7 @@ staticObjs.push({
     length: cubeGeometry.getVertices().length,
     name: 'test2',
     location: { x: 5, y: 0, z: 0 },
-    rotation: { x: 0, y: 0, z: 0 },
+    rotation: { x: 5, y: 0, z: 0 },
 });
 
 // loadModel('caixa');
